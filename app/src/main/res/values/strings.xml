@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Clip Frames</string>
+    <string name="convert_video">Convert Video</string>
+    <string name="video_tools">Video Tools</string>
+    <string name="audio_tools">Audio Tools</string>
+    <string name="convert_audio">Convert Audio</string>
+    <string name="stop">Stop</string>
+    <string name="active_converting">Converting</string>
+    <string name="converting_finished">Conversion Finished</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
+    <string name="extract_audio">Extract Audio</string>
+    <string name="create_gif">Create Animated Gif</string>
+    <string name="reverse_video">Reverse Video</string>
+    <string name="change_video_speed">Change Video Speed</string>
+    <string name="reverse_audio">Reverse Audio</string>
+    <string name="change_audio_speed">Change Audio Speed</string>
+    <string name="start_trimming">Start Trimming</string>
+    <string name="not_set">Not Set</string>
+    <string name="end_timestamp">End Timestamp:</string>
+    <string name="start_timestamp">Start Timestamp:</string>
+    <string name="set_stop_timestamp">Set Stop Timestamp</string>
+    <string name="set_start_timestamp">Set Start Timestamp</string>
+    <string name="open_video">Open Video</string>
+    <string name="trim_video">Trim Video</string>
+</resources>
