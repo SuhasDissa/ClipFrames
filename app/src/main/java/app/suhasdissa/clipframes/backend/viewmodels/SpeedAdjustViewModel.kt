@@ -11,10 +11,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import app.suhasdissa.clipframes.backend.models.FFMPEGCommand
 import app.suhasdissa.clipframes.backend.models.FFMPEGStatus
-import app.suhasdissa.clipframes.backend.models.ffmpegparam.FFMPEGParametersSpeed
 import app.suhasdissa.clipframes.backend.services.FFMPEGService
-import app.suhasdissa.clipframes.backend.services.SpeedAdjustService
+import app.suhasdissa.clipframes.backend.services.FFMPEGServiceImpl
 
 class SpeedAdjustViewModel : ViewModel() {
     var inputFile by mutableStateOf<Uri?>(null)
@@ -24,7 +24,7 @@ class SpeedAdjustViewModel : ViewModel() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val ffmpegService = (service as FFMPEGService.LocalBinder).getService()
-            (ffmpegService as SpeedAdjustService).onFFMPEGStatus = {
+            (ffmpegService as FFMPEGServiceImpl).onFFMPEGStatus = {
                 ffmpegStatus = it
             }
         }
@@ -41,15 +41,15 @@ class SpeedAdjustViewModel : ViewModel() {
         audioOnly: Boolean
     ) {
         inputFile?.let { inputFile ->
-            val ffmpegParameters = FFMPEGParametersSpeed(
+            val ffmpegParameters = FFMPEGCommand.FFMPEGSpeed(
                 inputFile.toString(),
                 extension = extension,
                 outputFilePrefix = "SpeedAdjust",
                 speed = speed,
                 audioOnly = audioOnly
             )
-            val serviceIntent = Intent(context, SpeedAdjustService::class.java)
-            serviceIntent.putExtra("parameters", ffmpegParameters)
+            val serviceIntent = Intent(context, FFMPEGServiceImpl::class.java)
+            serviceIntent.putExtra("command", ffmpegParameters)
             startconverterService(context, serviceIntent)
         }
     }
@@ -59,7 +59,7 @@ class SpeedAdjustViewModel : ViewModel() {
             context.unbindService(connection)
         }
         runCatching {
-            context.stopService(Intent(context, SpeedAdjustService::class.java))
+            context.stopService(Intent(context, FFMPEGServiceImpl::class.java))
         }
         ContextCompat.startForegroundService(context, intent)
         context.bindService(intent, connection, Context.BIND_AUTO_CREATE)

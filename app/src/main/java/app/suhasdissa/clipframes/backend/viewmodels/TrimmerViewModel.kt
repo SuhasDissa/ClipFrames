@@ -11,10 +11,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import app.suhasdissa.clipframes.backend.models.FFMPEGCommand
 import app.suhasdissa.clipframes.backend.models.FFMPEGStatus
-import app.suhasdissa.clipframes.backend.models.ffmpegparam.FFMPEGParametersTrimmer
 import app.suhasdissa.clipframes.backend.services.FFMPEGService
-import app.suhasdissa.clipframes.backend.services.TrimmerService
+import app.suhasdissa.clipframes.backend.services.FFMPEGServiceImpl
 import com.arthenica.ffmpegkit.MediaInformation
 
 class TrimmerViewModel : ViewModel() {
@@ -26,7 +26,7 @@ class TrimmerViewModel : ViewModel() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val ffmpegService = (service as FFMPEGService.LocalBinder).getService()
-            (ffmpegService as TrimmerService).onFFMPEGStatus = {
+            (ffmpegService as FFMPEGServiceImpl).onFFMPEGStatus = {
                 ffmpegStatus = it
             }
 
@@ -44,15 +44,15 @@ class TrimmerViewModel : ViewModel() {
         endTimeStamp: String
     ) {
         inputFile?.let { inputFile ->
-            val ffmpegParameters = FFMPEGParametersTrimmer(
+            val ffmpegParameters = FFMPEGCommand.FFMPEGTrimmer(
                 inputFile.toString(),
                 extension = extension,
                 outputFilePrefix = "Trimmed",
                 startTimeStamp = startTimestamp,
                 endTimeStamp = endTimeStamp
             )
-            val serviceIntent = Intent(context, TrimmerService::class.java)
-            serviceIntent.putExtra("parameters", ffmpegParameters)
+            val serviceIntent = Intent(context, FFMPEGServiceImpl::class.java)
+            serviceIntent.putExtra("command", ffmpegParameters)
             startconverterService(context, serviceIntent)
         }
     }
@@ -62,7 +62,7 @@ class TrimmerViewModel : ViewModel() {
             context.unbindService(connection)
         }
         runCatching {
-            context.stopService(Intent(context, TrimmerService::class.java))
+            context.stopService(Intent(context, FFMPEGServiceImpl::class.java))
         }
         ContextCompat.startForegroundService(context, intent)
         context.bindService(intent, connection, Context.BIND_AUTO_CREATE)

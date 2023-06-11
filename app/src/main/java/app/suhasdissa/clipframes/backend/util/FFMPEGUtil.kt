@@ -1,37 +1,24 @@
 package app.suhasdissa.clipframes.backend.util
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
+import app.suhasdissa.clipframes.backend.models.FFMPEGCommand
 import app.suhasdissa.clipframes.backend.models.FFMPEGStatus
-import app.suhasdissa.clipframes.backend.models.ffmpegparam.FFMPEGParameters
-import app.suhasdissa.clipframes.backend.models.ffmpegparam.FFMPEGParametersReverse
-import app.suhasdissa.clipframes.backend.models.ffmpegparam.FFMPEGParametersSpeed
-import app.suhasdissa.clipframes.backend.models.ffmpegparam.FFMPEGParametersTrimmer
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.FFmpegKitConfig
-import com.arthenica.ffmpegkit.FFprobeKit
-import com.arthenica.ffmpegkit.MediaInformation
 import com.arthenica.ffmpegkit.Statistics
 
 
 object FFMPEGUtil {
-
-    fun getMediaInfo(uri: Uri, context: Context): MediaInformation? {
-        val inputVideoPath = FFmpegKitConfig.getSafParameterForRead(context, uri)
-        val mediaInformation = FFprobeKit.getMediaInformation(inputVideoPath)
-        return mediaInformation.mediaInformation
-    }
-
     fun convert(
         context: Context,
         onFinished: (FFMPEGStatus) -> Unit,
-        ffmpegParameters: FFMPEGParameters,
+        ffmpegParameters: FFMPEGCommand.FFMPEGConvert,
         onStatistics: (Statistics) -> Unit
     ) {
         val inputFilePath =
-            FFmpegKitConfig.getSafParameterForRead(context, ffmpegParameters.inputFile.toUri());
+            FFmpegKitConfig.getSafParameterForRead(context, ffmpegParameters.inputFile.toUri())
         val outputFIlePath = StorageHelper.getOutputFile(
             ffmpegParameters.extension,
             ffmpegParameters.outputFilePrefix
@@ -48,11 +35,11 @@ object FFMPEGUtil {
     fun reverse(
         context: Context,
         onFinished: (FFMPEGStatus) -> Unit,
-        ffmpegParameters: FFMPEGParametersReverse,
+        ffmpegParameters: FFMPEGCommand.FFMPEGReverse,
         onStatistics: (Statistics) -> Unit
     ) {
         val inputFilePath =
-            FFmpegKitConfig.getSafParameterForRead(context, ffmpegParameters.inputFile.toUri());
+            FFmpegKitConfig.getSafParameterForRead(context, ffmpegParameters.inputFile.toUri())
         val outputFIlePath = StorageHelper.getOutputFile(
             ffmpegParameters.extension,
             ffmpegParameters.outputFilePrefix
@@ -68,11 +55,11 @@ object FFMPEGUtil {
     fun trimmer(
         context: Context,
         onFinished: (FFMPEGStatus) -> Unit,
-        ffmpegParameters: FFMPEGParametersTrimmer,
+        ffmpegParameters: FFMPEGCommand.FFMPEGTrimmer,
         onStatistics: (Statistics) -> Unit
     ) {
         val inputFilePath =
-            FFmpegKitConfig.getSafParameterForRead(context, ffmpegParameters.inputFile.toUri());
+            FFmpegKitConfig.getSafParameterForRead(context, ffmpegParameters.inputFile.toUri())
         val outputFIlePath = StorageHelper.getOutputFile(
             ffmpegParameters.extension,
             ffmpegParameters.outputFilePrefix
@@ -87,11 +74,11 @@ object FFMPEGUtil {
     fun speedAdjust(
         context: Context,
         onFinished: (FFMPEGStatus) -> Unit,
-        ffmpegParameters: FFMPEGParametersSpeed,
+        ffmpegParameters: FFMPEGCommand.FFMPEGSpeed,
         onStatistics: (Statistics) -> Unit
     ) {
         val inputFilePath =
-            FFmpegKitConfig.getSafParameterForRead(context, ffmpegParameters.inputFile.toUri());
+            FFmpegKitConfig.getSafParameterForRead(context, ffmpegParameters.inputFile.toUri())
         val outputFIlePath = StorageHelper.getOutputFile(
             ffmpegParameters.extension,
             ffmpegParameters.outputFilePrefix

@@ -26,10 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".backend.services.ConverterService" />
-        <service android:name=".backend.services.ReverseService" />
-        <service android:name=".backend.services.TrimmerService" />
-        <service android:name=".backend.services.SpeedAdjustService" />
+        <service android:name=".backend.services.FFMPEGServiceImpl" />
     </application>
 
 </manifest>

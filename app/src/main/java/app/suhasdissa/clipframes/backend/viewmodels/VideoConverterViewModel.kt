@@ -14,12 +14,12 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import app.suhasdissa.clipframes.backend.models.AudioCodec
+import app.suhasdissa.clipframes.backend.models.FFMPEGCommand
 import app.suhasdissa.clipframes.backend.models.FFMPEGStatus
 import app.suhasdissa.clipframes.backend.models.VideoCodec
 import app.suhasdissa.clipframes.backend.models.VideoExtensions
-import app.suhasdissa.clipframes.backend.models.ffmpegparam.FFMPEGParameters
-import app.suhasdissa.clipframes.backend.services.ConverterService
 import app.suhasdissa.clipframes.backend.services.FFMPEGService
+import app.suhasdissa.clipframes.backend.services.FFMPEGServiceImpl
 
 class VideoConverterViewModel : ViewModel() {
     var inputFile by mutableStateOf<Uri?>(null)
@@ -35,7 +35,7 @@ class VideoConverterViewModel : ViewModel() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val ffmpegService = (service as FFMPEGService.LocalBinder).getService()
-            (ffmpegService as ConverterService).onFFMPEGStatus = {
+            (ffmpegService as FFMPEGServiceImpl).onFFMPEGStatus = {
                 ffmpegStatus = it
             }
 
@@ -48,15 +48,15 @@ class VideoConverterViewModel : ViewModel() {
 
     fun startConverter(context: Context, outputFilePrefix: String) {
         inputFile?.let { inputFile ->
-            val ffmpegParameters = FFMPEGParameters(
+            val ffmpegParameters = FFMPEGCommand.FFMPEGConvert(
                 inputFile.toString(),
                 videoCodec = videoCodec?.codec,
                 audioCodec = audioCodec?.codec,
                 extension = fileExtension.extension,
                 outputFilePrefix = outputFilePrefix
             )
-            val serviceIntent = Intent(context, ConverterService::class.java)
-            serviceIntent.putExtra("parameters", ffmpegParameters)
+            val serviceIntent = Intent(context, FFMPEGServiceImpl::class.java)
+            serviceIntent.putExtra("command", ffmpegParameters)
             Log.d("ViewModel", "Service Intent Sending...")
             startconverterService(context, serviceIntent)
         } ?: {
@@ -69,12 +69,10 @@ class VideoConverterViewModel : ViewModel() {
             context.unbindService(connection)
         }
         runCatching {
-            context.stopService(Intent(context, ConverterService::class.java))
+            context.stopService(Intent(context, FFMPEGServiceImpl::class.java))
         }
 
         ContextCompat.startForegroundService(context, intent)
-        Log.d("ViewModel", "Service Intent Sent")
         context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        Log.d("ViewModel", "Service Bound")
     }
 }
