@@ -8,10 +8,10 @@ import app.suhasdissa.clipframes.ui.screens.HomeScreen
 import app.suhasdissa.clipframes.ui.screens.audiotools.AudioConverterScreen
 import app.suhasdissa.clipframes.ui.screens.audiotools.AudioReverseScreen
 import app.suhasdissa.clipframes.ui.screens.videotools.ExtractAudioScreen
+import app.suhasdissa.clipframes.ui.screens.videotools.SpeedAdjustScreen
 import app.suhasdissa.clipframes.ui.screens.videotools.TrimMode
 import app.suhasdissa.clipframes.ui.screens.videotools.VideoConverterScreen
 import app.suhasdissa.clipframes.ui.screens.videotools.VideoReverseScreen
-import app.suhasdissa.clipframes.ui.screens.videotools.SpeedAdjustScreen
 import app.suhasdissa.clipframes.ui.screens.videotools.VideoTrimmerScreen
 
 @Composable

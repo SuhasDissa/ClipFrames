@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import app.suhasdissa.clipframes.R
 import app.suhasdissa.clipframes.backend.models.AudioCodec
 import app.suhasdissa.clipframes.backend.models.AudioExtensions
 import app.suhasdissa.clipframes.backend.models.FFMPEGStatus
@@ -32,6 +32,8 @@ import app.suhasdissa.clipframes.backend.models.FileExtension
 import app.suhasdissa.clipframes.backend.viewmodels.AudioConverterViewModel
 import app.suhasdissa.clipframes.ui.components.AudioCodecDialog
 import app.suhasdissa.clipframes.ui.components.FileExtensionDialog
+import app.suhasdissa.clipframes.ui.components.ScaffoldWithFAB
+import app.suhasdissa.clipframes.ui.components.VideoPlayer
 
 
 @Composable
@@ -40,7 +42,7 @@ fun ExtractAudioScreen(converterViewModel: AudioConverterViewModel = viewModel()
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) { result ->
             result?.let { uri ->
-                converterViewModel.setInputFileUri(uri, context)
+                converterViewModel.inputFile = uri
             }
         }
     var audioCodecDialog by remember { mutableStateOf(false) }
@@ -67,15 +69,30 @@ fun ExtractAudioScreen(converterViewModel: AudioConverterViewModel = viewModel()
             allExtensions = AudioExtensions.all
         )
     }
-    LazyColumn(
-        Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
-        item {
-            converterViewModel.inputFileMediaInfo?.let {
+    ScaffoldWithFAB(
+        title = R.string.extract_audio,
+        onFileOpen = { launcher.launch(arrayOf("video/*")) },
+        onAction = {
+            converterViewModel.startConverter(context, "ExtractAudio")
+        },
+        actionAllowed = true
+    ) { paddingValues ->
+        LazyColumn(
+            Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            converterViewModel.inputFile?.let {
+                item {
+                    VideoPlayer(uri = it, context = context)
+                }
+            }
+            item {
                 ElevatedCard(
                     Modifier
+                        .clickable(onClick = { audioCodecDialog = true })
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(10.dp)
                 ) {
@@ -85,85 +102,51 @@ fun ExtractAudioScreen(converterViewModel: AudioConverterViewModel = viewModel()
                             .padding(10.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Opened File:")
+                        Text("Audio Codec:")
                         Text(
-                            it.format,
+                            selectedAudioCodec?.name ?: "Default",
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
                 }
             }
-        }
-        item {
-            Button(onClick = { launcher.launch(arrayOf("video/*")) }) {
-                Text("Open Video")
-            }
-        }
-        item {
-            ElevatedCard(
-                Modifier
-                    .clickable(onClick = { audioCodecDialog = true })
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("Audio Codec:")
-                    Text(
-                        selectedAudioCodec?.name ?: "Default",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-        }
-        item {
-            ElevatedCard(
-                Modifier
-                    .clickable(onClick = { fileExtensionDialog = true })
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("File Extension:")
-                    Text(
-                        selectedExtension.name,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-        }
-        item {
-            Button(onClick = {
-                converterViewModel.startConverter(context, "ExtractAudio")
-            }) {
-                Text("Start Convert")
-            }
-
-        }
-        converterViewModel.ffmpegStatus?.let {
             item {
-                when (it) {
-                    is FFMPEGStatus.Error -> Text("Some error occured")
-                    is FFMPEGStatus.Success -> Text("Success")
-                    is FFMPEGStatus.Cancelled -> Text("Cancelled")
-                    is FFMPEGStatus.Running -> it.statistics.let {
+                ElevatedCard(
+                    Modifier
+                        .clickable(onClick = { fileExtensionDialog = true })
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("File Extension:")
                         Text(
-                            text = "Time: " + DateUtils.formatElapsedTime(
-                                it.time.toLong().div(1000)
-                            )
+                            selectedExtension.name,
+                            style = MaterialTheme.typography.bodyLarge
                         )
-                        Text(text = "Bitrate: ${it.bitrate}")
-                        Text(text = "Speed: ${it.speed}")
-                        Text(text = "VideoFrameNumber: ${it.videoFrameNumber}")
+                    }
+                }
+            }
+            converterViewModel.ffmpegStatus?.let {
+                item {
+                    when (it) {
+                        is FFMPEGStatus.Error -> Text("Some error occured")
+                        is FFMPEGStatus.Success -> Text("Success")
+                        is FFMPEGStatus.Cancelled -> Text("Cancelled")
+                        is FFMPEGStatus.Running -> it.statistics.let {
+                            Text(
+                                text = "Time: " + DateUtils.formatElapsedTime(
+                                    it.time.toLong().div(1000)
+                                )
+                            )
+                            Text(text = "Bitrate: ${it.bitrate}")
+                            Text(text = "Speed: ${it.speed}")
+                            Text(text = "VideoFrameNumber: ${it.videoFrameNumber}")
+                        }
                     }
                 }
             }

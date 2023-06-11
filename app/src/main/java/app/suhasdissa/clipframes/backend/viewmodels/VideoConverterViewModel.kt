@@ -20,12 +20,9 @@ import app.suhasdissa.clipframes.backend.models.VideoExtensions
 import app.suhasdissa.clipframes.backend.models.ffmpegparam.FFMPEGParameters
 import app.suhasdissa.clipframes.backend.services.ConverterService
 import app.suhasdissa.clipframes.backend.services.FFMPEGService
-import com.arthenica.ffmpegkit.MediaInformation
 
 class VideoConverterViewModel : ViewModel() {
-    private var inputFile by mutableStateOf<Uri?>(null)
-
-    var inputFileMediaInfo by mutableStateOf<MediaInformation?>(null)
+    var inputFile by mutableStateOf<Uri?>(null)
 
     var ffmpegStatus by mutableStateOf<FFMPEGStatus?>(null)
 
@@ -34,10 +31,6 @@ class VideoConverterViewModel : ViewModel() {
 
     var fileExtension by mutableStateOf(VideoExtensions.all.first())
 
-    fun setInputFileUri(uri: Uri, context: Context) {
-        inputFile = uri
-        //inputFileMediaInfo = FFMPEGUtil.getMediaInfo(uri, context)
-    }
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {

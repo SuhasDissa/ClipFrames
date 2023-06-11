@@ -19,15 +19,9 @@ import com.arthenica.ffmpegkit.MediaInformation
 
 class TrimmerViewModel : ViewModel() {
     var inputFile by mutableStateOf<Uri?>(null)
-        private set
 
     var inputFileMediaInfo by mutableStateOf<MediaInformation?>(null)
     var ffmpegStatus by mutableStateOf<FFMPEGStatus?>(null)
-
-    fun setInputFileUri(uri: Uri, context: Context) {
-        inputFile = uri
-        //inputFileMediaInfo = FFMPEGUtil.getMediaInfo(uri, context)
-    }
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {

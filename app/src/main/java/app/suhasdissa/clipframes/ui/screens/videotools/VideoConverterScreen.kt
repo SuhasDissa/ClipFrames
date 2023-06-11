@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import app.suhasdissa.clipframes.R
 import app.suhasdissa.clipframes.backend.models.AudioCodec
 import app.suhasdissa.clipframes.backend.models.FFMPEGStatus
 import app.suhasdissa.clipframes.backend.models.FileExtension
@@ -33,7 +33,9 @@ import app.suhasdissa.clipframes.backend.models.VideoExtensions
 import app.suhasdissa.clipframes.backend.viewmodels.VideoConverterViewModel
 import app.suhasdissa.clipframes.ui.components.AudioCodecDialog
 import app.suhasdissa.clipframes.ui.components.FileExtensionDialog
+import app.suhasdissa.clipframes.ui.components.ScaffoldWithFAB
 import app.suhasdissa.clipframes.ui.components.VideoCodecDialog
+import app.suhasdissa.clipframes.ui.components.VideoPlayer
 
 
 @Composable
@@ -42,7 +44,7 @@ fun VideoConverterScreen(converterViewModel: VideoConverterViewModel = viewModel
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) { result ->
             result?.let { uri ->
-                converterViewModel.setInputFileUri(uri, context)
+                converterViewModel.inputFile = uri
             }
         }
     var audioCodecDialog by remember { mutableStateOf(false) }
@@ -81,15 +83,30 @@ fun VideoConverterScreen(converterViewModel: VideoConverterViewModel = viewModel
             allExtensions = VideoExtensions.all
         )
     }
-    LazyColumn(
-        Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
-        item {
-            converterViewModel.inputFileMediaInfo?.let {
+    ScaffoldWithFAB(
+        title = R.string.video_converter,
+        onFileOpen = { launcher.launch(arrayOf("video/*")) },
+        onAction = {
+            converterViewModel.startConverter(context, "VideoConvert")
+        },
+        actionAllowed = true
+    ) { paddingValues ->
+        LazyColumn(
+            Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            converterViewModel.inputFile?.let {
+                item {
+                    VideoPlayer(uri = it, context = context)
+                }
+            }
+            item {
                 ElevatedCard(
                     Modifier
+                        .clickable(onClick = { videoCodecDialog = true })
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(10.dp)
                 ) {
@@ -99,106 +116,72 @@ fun VideoConverterScreen(converterViewModel: VideoConverterViewModel = viewModel
                             .padding(10.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Opened File:")
+                        Text("Video Codec:")
                         Text(
-                            it.format,
+                            selectedVideoCodec?.name ?: "Default",
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
                 }
             }
-        }
-        item {
-            Button(onClick = { launcher.launch(arrayOf("video/*")) }) {
-                Text("Open Video")
-            }
-        }
-        item {
-            ElevatedCard(
-                Modifier
-                    .clickable(onClick = { videoCodecDialog = true })
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("Video Codec:")
-                    Text(
-                        selectedVideoCodec?.name ?: "Default",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-        }
-        item {
-            ElevatedCard(
-                Modifier
-                    .clickable(onClick = { audioCodecDialog = true })
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("Audio Codec:")
-                    Text(
-                        selectedAudioCodec?.name ?: "Default",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-        }
-        item {
-            ElevatedCard(
-                Modifier
-                    .clickable(onClick = { fileExtensionDialog = true })
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("File Extension:")
-                    Text(
-                        selectedExtension.name,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-        }
-        item {
-            Button(onClick = {
-                converterViewModel.startConverter(context, "VideoConvert")
-            }) {
-                Text("Start Convert")
-            }
-
-        }
-        converterViewModel.ffmpegStatus?.let {
             item {
-                when (it) {
-                    is FFMPEGStatus.Error -> Text("Some error occured")
-                    is FFMPEGStatus.Success -> Text("Converting Success")
-                    is FFMPEGStatus.Cancelled -> Text("Converting Cancelled")
-                    is FFMPEGStatus.Running -> it.statistics.let {
+                ElevatedCard(
+                    Modifier
+                        .clickable(onClick = { audioCodecDialog = true })
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("Audio Codec:")
                         Text(
-                            text = "Time: " + DateUtils.formatElapsedTime(
-                                it.time.toLong().div(1000)
-                            )
+                            selectedAudioCodec?.name ?: "Default",
+                            style = MaterialTheme.typography.bodyLarge
                         )
-                        Text(text = "Bitrate: ${it.bitrate}")
-                        Text(text = "Speed: ${it.speed}")
-                        Text(text = "VideoFrameNumber: ${it.videoFrameNumber}")
+                    }
+                }
+            }
+            item {
+                ElevatedCard(
+                    Modifier
+                        .clickable(onClick = { fileExtensionDialog = true })
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("File Extension:")
+                        Text(
+                            selectedExtension.name,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
+            converterViewModel.ffmpegStatus?.let {
+                item {
+                    when (it) {
+                        is FFMPEGStatus.Error -> Text("Some error occured")
+                        is FFMPEGStatus.Success -> Text("Converting Success")
+                        is FFMPEGStatus.Cancelled -> Text("Converting Cancelled")
+                        is FFMPEGStatus.Running -> it.statistics.let {
+                            Text(
+                                text = "Time: " + DateUtils.formatElapsedTime(
+                                    it.time.toLong().div(1000)
+                                )
+                            )
+                            Text(text = "Bitrate: ${it.bitrate}")
+                            Text(text = "Speed: ${it.speed}")
+                            Text(text = "VideoFrameNumber: ${it.videoFrameNumber}")
+                        }
                     }
                 }
             }

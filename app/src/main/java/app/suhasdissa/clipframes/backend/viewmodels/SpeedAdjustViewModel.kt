@@ -15,19 +15,11 @@ import app.suhasdissa.clipframes.backend.models.FFMPEGStatus
 import app.suhasdissa.clipframes.backend.models.ffmpegparam.FFMPEGParametersSpeed
 import app.suhasdissa.clipframes.backend.services.FFMPEGService
 import app.suhasdissa.clipframes.backend.services.SpeedAdjustService
-import com.arthenica.ffmpegkit.MediaInformation
 
 class SpeedAdjustViewModel : ViewModel() {
-    private var inputFile by mutableStateOf<Uri?>(null)
-
-    var inputFileMediaInfo by mutableStateOf<MediaInformation?>(null)
+    var inputFile by mutableStateOf<Uri?>(null)
 
     var ffmpegStatus by mutableStateOf<FFMPEGStatus?>(null)
-
-    fun setInputFileUri(uri: Uri, context: Context) {
-        inputFile = uri
-        //inputFileMediaInfo = FFMPEGUtil.getMediaInfo(uri, context)
-    }
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {

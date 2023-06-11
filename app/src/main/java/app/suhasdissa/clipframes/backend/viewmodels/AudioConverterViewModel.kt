@@ -19,23 +19,15 @@ import app.suhasdissa.clipframes.backend.models.FFMPEGStatus
 import app.suhasdissa.clipframes.backend.models.ffmpegparam.FFMPEGParameters
 import app.suhasdissa.clipframes.backend.services.ConverterService
 import app.suhasdissa.clipframes.backend.services.FFMPEGService
-import com.arthenica.ffmpegkit.MediaInformation
 
 class AudioConverterViewModel : ViewModel() {
-    private var inputFile by mutableStateOf<Uri?>(null)
-
-    var inputFileMediaInfo by mutableStateOf<MediaInformation?>(null)
+    var inputFile by mutableStateOf<Uri?>(null)
 
     var ffmpegStatus by mutableStateOf<FFMPEGStatus?>(null)
 
     var audioCodec by mutableStateOf<AudioCodec?>(null)
 
     var fileExtension by mutableStateOf(AudioExtensions.all.first())
-
-    fun setInputFileUri(uri: Uri, context: Context) {
-        inputFile = uri
-        //inputFileMediaInfo = FFMPEGUtil.getMediaInfo(uri, context)
-    }
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {

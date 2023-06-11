@@ -31,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import app.suhasdissa.clipframes.R
 import app.suhasdissa.clipframes.backend.models.FFMPEGStatus
 import app.suhasdissa.clipframes.backend.viewmodels.TrimmerViewModel
+import app.suhasdissa.clipframes.ui.components.ScaffoldWithFAB
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ui.StyledPlayerView
@@ -53,7 +54,7 @@ fun VideoTrimmerScreen(converterViewModel: TrimmerViewModel = viewModel(), trimM
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) { result ->
             result?.let { uri ->
-                converterViewModel.setInputFileUri(uri, context)
+                converterViewModel.inputFile = uri
 
                 val mediaItem = MediaItem.Builder()
                     .setUri(uri)
@@ -63,153 +64,149 @@ fun VideoTrimmerScreen(converterViewModel: TrimmerViewModel = viewModel(), trimM
 
             }
         }
-    LazyColumn(
-        Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
-        converterViewModel.inputFile?.let {
-            item {
-                DisposableEffect(
-                    AndroidView(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(250.dp),
-                        factory = {
-                            StyledPlayerView(context).apply {
-                                player = exoPlayer
-                                setShowNextButton(false)
-                                setShowPreviousButton(false)
-                                setShowFastForwardButton(false)
-                                setShowRewindButton(false)
+    ScaffoldWithFAB(
+        title = R.string.trim_video,
+        onFileOpen = { launcher.launch(arrayOf("video/*")) },
+        onAction = {
+            converterViewModel.startTrimming(
+                context = context,
+                extension = (if (trimMode == TrimMode.GIF) "gif" else "mp4"),
+                startTimestamp = DateUtils.formatElapsedTime(startTimeStamp!!),
+                endTimeStamp = DateUtils.formatElapsedTime(endTimeStamp!!)
+            )
+        },
+        actionAllowed = true
+    ) { paddingValues ->
+        LazyColumn(
+            Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            converterViewModel.inputFile?.let {
+                item {
+                    DisposableEffect(
+                        AndroidView(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(250.dp),
+                            factory = {
+                                StyledPlayerView(context).apply {
+                                    player = exoPlayer
+                                    setShowNextButton(false)
+                                    setShowPreviousButton(false)
+                                    setShowFastForwardButton(false)
+                                    setShowRewindButton(false)
+                                }
                             }
-                        }
-                    )
+                        )
 
-                ) {
-                    onDispose { exoPlayer.release() }
-                }
-            }
-        }
-        item {
-            converterViewModel.inputFileMediaInfo?.let {
-                ElevatedCard(
-                    Modifier
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text("Opened File:")
-                        Text(
-                            it.format,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+                        onDispose { exoPlayer.release() }
                     }
                 }
             }
-        }
-        item {
-            Button(onClick = { launcher.launch(arrayOf("video/*")) }) {
-                Text(stringResource(R.string.open_video))
-            }
-        }
-        item {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Button(onClick = { startTimeStamp = exoPlayer.currentPosition / 1000 }) {
-                    Text(text = stringResource(R.string.set_start_timestamp))
-                }
-                Button(
-                    onClick = {
-                        (exoPlayer.currentPosition / 1000).let {
-                            if (it > startTimeStamp!!) {
-                                endTimeStamp = it
-                            }
-                        }
-                    },
-                    enabled = (startTimeStamp != null)
-                ) {
-                    Text(text = stringResource(R.string.set_stop_timestamp))
-                }
-            }
-        }
-        item {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(stringResource(R.string.start_timestamp))
-                Text(
-                    startTimeStamp?.let {
-                        DateUtils.formatElapsedTime(it)
-                    } ?: stringResource(R.string.not_set),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-        }
-        item {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(stringResource(R.string.end_timestamp))
-                Text(
-                    endTimeStamp?.let {
-                        DateUtils.formatElapsedTime(it)
-                    } ?: stringResource(R.string.not_set),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-        }
-        item {
-            Button(
-                onClick = {
-                    converterViewModel.startTrimming(
-                        context = context,
-                        extension = (if (trimMode == TrimMode.GIF) "gif" else "mp4"),
-                        startTimestamp = DateUtils.formatElapsedTime(startTimeStamp!!),
-                        endTimeStamp = DateUtils.formatElapsedTime(endTimeStamp!!)
-                    )
-                },
-                enabled = (startTimeStamp != null && endTimeStamp != null)
-            ) {
-                Text(stringResource(R.string.start_trimming))
-            }
-
-        }
-        converterViewModel.ffmpegStatus?.let {
             item {
-                when (it) {
-                    is FFMPEGStatus.Error -> Text("Some error occured")
-                    is FFMPEGStatus.Success -> Text("Trimming Success")
-                    is FFMPEGStatus.Cancelled -> Text("Trimming Cancelled")
-                    is FFMPEGStatus.Running -> it.statistics.let {
-                        Text(
-                            text = "Time: " + DateUtils.formatElapsedTime(
-                                it.time.toLong().div(1000)
+                converterViewModel.inputFileMediaInfo?.let {
+                    ElevatedCard(
+                        Modifier
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("Opened File:")
+                            Text(
+                                it.format,
+                                style = MaterialTheme.typography.bodyLarge
                             )
-                        )
-                        Text(text = "Bitrate: ${it.bitrate}")
-                        Text(text = "Speed: ${it.speed}")
-                        Text(text = "VideoFrameNumber: ${it.videoFrameNumber}")
+                        }
                     }
                 }
             }
-        }
+            item {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Button(onClick = { startTimeStamp = exoPlayer.currentPosition / 1000 }) {
+                        Text(text = stringResource(R.string.set_start_timestamp))
+                    }
+                    Button(
+                        onClick = {
+                            (exoPlayer.currentPosition / 1000).let {
+                                if (it > startTimeStamp!!) {
+                                    endTimeStamp = it
+                                }
+                            }
+                        },
+                        enabled = (startTimeStamp != null)
+                    ) {
+                        Text(text = stringResource(R.string.set_stop_timestamp))
+                    }
+                }
+            }
+            item {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(stringResource(R.string.start_timestamp))
+                    Text(
+                        startTimeStamp?.let {
+                            DateUtils.formatElapsedTime(it)
+                        } ?: stringResource(R.string.not_set),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+            item {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(stringResource(R.string.end_timestamp))
+                    Text(
+                        endTimeStamp?.let {
+                            DateUtils.formatElapsedTime(it)
+                        } ?: stringResource(R.string.not_set),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
 
+            converterViewModel.ffmpegStatus?.let {
+                item {
+                    when (it) {
+                        is FFMPEGStatus.Error -> Text("Some error occured")
+                        is FFMPEGStatus.Success -> Text("Trimming Success")
+                        is FFMPEGStatus.Cancelled -> Text("Trimming Cancelled")
+                        is FFMPEGStatus.Running -> it.statistics.let {
+                            Text(
+                                text = "Time: " + DateUtils.formatElapsedTime(
+                                    it.time.toLong().div(1000)
+                                )
+                            )
+                            Text(text = "Bitrate: ${it.bitrate}")
+                            Text(text = "Speed: ${it.speed}")
+                            Text(text = "VideoFrameNumber: ${it.videoFrameNumber}")
+                        }
+                    }
+                }
+            }
+
+        }
     }
 }
 

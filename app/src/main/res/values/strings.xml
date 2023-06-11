@@ -23,4 +23,9 @@
     <string name="set_start_timestamp">Set Start Timestamp</string>
     <string name="open_video">Open Video</string>
     <string name="trim_video">Trim Video</string>
+    <string name="open_file">Open File</string>
+    <string name="audio_converter">Audio Converter</string>
+    <string name="audio_reverse">Audio Reverse</string>
+    <string name="video_converter">Video Converter</string>
+    <string name="start_processing">Start Processing</string>
 </resources>
