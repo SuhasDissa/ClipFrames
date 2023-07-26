@@ -29,7 +29,6 @@ import app.suhasdissa.clipframes.ui.components.AudioPlayer
 import app.suhasdissa.clipframes.ui.components.ScaffoldWithFAB
 import app.suhasdissa.clipframes.ui.components.VideoPlayer
 
-
 @Composable
 fun SpeedAdjustScreen(
     converterViewModel: SpeedAdjustViewModel = viewModel(),
@@ -64,7 +63,6 @@ fun SpeedAdjustScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             converterViewModel.inputFile?.let {
-
                 item {
                     if (audioOnly) {
                         AudioPlayer(uri = it, context = context)

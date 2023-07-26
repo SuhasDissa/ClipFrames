@@ -36,7 +36,6 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ui.StyledPlayerView
 
-
 @Composable
 fun VideoTrimmerScreen(converterViewModel: TrimmerViewModel = viewModel(), trimMode: TrimMode) {
     val context = LocalContext.current
@@ -61,7 +60,6 @@ fun VideoTrimmerScreen(converterViewModel: TrimmerViewModel = viewModel(), trimM
                     .build()
                 exoPlayer.setMediaItem(mediaItem)
                 exoPlayer.prepare()
-
             }
         }
     ScaffoldWithFAB(
@@ -205,7 +203,6 @@ fun VideoTrimmerScreen(converterViewModel: TrimmerViewModel = viewModel(), trimM
                     }
                 }
             }
-
         }
     }
 }

@@ -31,18 +31,15 @@ class VideoConverterViewModel : ViewModel() {
 
     var fileExtension by mutableStateOf(VideoExtensions.all.first())
 
-
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val ffmpegService = (service as FFMPEGService.LocalBinder).getService()
             (ffmpegService as FFMPEGServiceImpl).onFFMPEGStatus = {
                 ffmpegStatus = it
             }
-
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
-
         }
     }
 

@@ -27,7 +27,6 @@ import app.suhasdissa.clipframes.backend.viewmodels.ReverseViewModel
 import app.suhasdissa.clipframes.ui.components.ScaffoldWithFAB
 import app.suhasdissa.clipframes.ui.components.VideoPlayer
 
-
 @Composable
 fun VideoReverseScreen(converterViewModel: ReverseViewModel = viewModel()) {
     val context = LocalContext.current

@@ -35,7 +35,6 @@ import app.suhasdissa.clipframes.ui.components.FileExtensionDialog
 import app.suhasdissa.clipframes.ui.components.ScaffoldWithFAB
 import app.suhasdissa.clipframes.ui.components.VideoPlayer
 
-
 @Composable
 fun ExtractAudioScreen(converterViewModel: AudioConverterViewModel = viewModel()) {
     val context = LocalContext.current
@@ -46,7 +45,9 @@ fun ExtractAudioScreen(converterViewModel: AudioConverterViewModel = viewModel()
             }
         }
     var audioCodecDialog by remember { mutableStateOf(false) }
-    var selectedAudioCodec: AudioCodec? by remember { mutableStateOf(converterViewModel.audioCodec) }
+    var selectedAudioCodec: AudioCodec? by remember {
+        mutableStateOf(converterViewModel.audioCodec)
+    }
     if (audioCodecDialog) {
         AudioCodecDialog(
             onSubmitButtonClick = {
@@ -56,7 +57,9 @@ fun ExtractAudioScreen(converterViewModel: AudioConverterViewModel = viewModel()
             onDismissRequest = { audioCodecDialog = false }
         )
     }
-    var selectedExtension: FileExtension by remember { mutableStateOf(converterViewModel.fileExtension) }
+    var selectedExtension: FileExtension by remember {
+        mutableStateOf(converterViewModel.fileExtension)
+    }
     var fileExtensionDialog by remember { mutableStateOf(false) }
     if (fileExtensionDialog) {
         FileExtensionDialog(

@@ -37,7 +37,6 @@ import app.suhasdissa.clipframes.ui.components.ScaffoldWithFAB
 import app.suhasdissa.clipframes.ui.components.VideoCodecDialog
 import app.suhasdissa.clipframes.ui.components.VideoPlayer
 
-
 @Composable
 fun VideoConverterScreen(converterViewModel: VideoConverterViewModel = viewModel()) {
     val context = LocalContext.current
@@ -48,7 +47,9 @@ fun VideoConverterScreen(converterViewModel: VideoConverterViewModel = viewModel
             }
         }
     var audioCodecDialog by remember { mutableStateOf(false) }
-    var selectedAudioCodec: AudioCodec? by remember { mutableStateOf(converterViewModel.audioCodec) }
+    var selectedAudioCodec: AudioCodec? by remember {
+        mutableStateOf(converterViewModel.audioCodec)
+    }
     if (audioCodecDialog) {
         AudioCodecDialog(
             onSubmitButtonClick = {
@@ -60,7 +61,9 @@ fun VideoConverterScreen(converterViewModel: VideoConverterViewModel = viewModel
     }
 
     var videoCodecDialog by remember { mutableStateOf(false) }
-    var selectedVideoCodec: VideoCodec? by remember { mutableStateOf(converterViewModel.videoCodec) }
+    var selectedVideoCodec: VideoCodec? by remember {
+        mutableStateOf(converterViewModel.videoCodec)
+    }
     if (videoCodecDialog) {
         VideoCodecDialog(
             onSubmitButtonClick = {
@@ -70,7 +73,9 @@ fun VideoConverterScreen(converterViewModel: VideoConverterViewModel = viewModel
             onDismissRequest = { videoCodecDialog = false }
         )
     }
-    var selectedExtension: FileExtension by remember { mutableStateOf(converterViewModel.fileExtension) }
+    var selectedExtension: FileExtension by remember {
+        mutableStateOf(converterViewModel.fileExtension)
+    }
     var fileExtensionDialog by remember { mutableStateOf(false) }
     if (fileExtensionDialog) {
         FileExtensionDialog(

@@ -8,7 +8,7 @@ sealed class FFMPEGCommand : Serializable {
         val videoCodec: String?,
         val audioCodec: String?,
         val extension: String,
-        val outputFilePrefix: String,
+        val outputFilePrefix: String
     ) : FFMPEGCommand()
 
     data class FFMPEGReverse(
@@ -16,7 +16,7 @@ sealed class FFMPEGCommand : Serializable {
         val extension: String,
         val audio: Boolean,
         val video: Boolean,
-        val outputFilePrefix: String,
+        val outputFilePrefix: String
     ) : FFMPEGCommand()
 
     data class FFMPEGSpeed(
@@ -24,7 +24,7 @@ sealed class FFMPEGCommand : Serializable {
         val speed: Float,
         val audioOnly: Boolean,
         val extension: String,
-        val outputFilePrefix: String,
+        val outputFilePrefix: String
     ) : FFMPEGCommand()
 
     data class FFMPEGTrimmer(
@@ -32,6 +32,6 @@ sealed class FFMPEGCommand : Serializable {
         val extension: String,
         val startTimeStamp: String,
         val endTimeStamp: String,
-        val outputFilePrefix: String,
+        val outputFilePrefix: String
     ) : FFMPEGCommand()
 }

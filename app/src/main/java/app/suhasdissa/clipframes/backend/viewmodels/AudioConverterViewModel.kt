@@ -38,9 +38,7 @@ class AudioConverterViewModel : ViewModel() {
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-
         }
-
     }
 
     fun startConverter(context: Context, outputFilePrefix: String) {

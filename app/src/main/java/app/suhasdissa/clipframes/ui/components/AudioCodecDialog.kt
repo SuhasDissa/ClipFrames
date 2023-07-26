@@ -35,7 +35,8 @@ fun AudioCodecDialog(
     var selectedCodec by remember { mutableStateOf(AudioCodecs.all.first()) }
     Dialog(onDismissRequest = { onDismissRequest.invoke() }) {
         Surface(
-            modifier = modifier.width(300.dp), shape = RoundedCornerShape(10.dp)
+            modifier = modifier.width(300.dp),
+            shape = RoundedCornerShape(10.dp)
         ) {
             Column(modifier = modifier.padding(10.dp)) {
                 Text("Select Audio Codec")
@@ -50,16 +51,18 @@ fun AudioCodecDialog(
                                 })
                                 .padding(horizontal = 16.dp)
                         ) {
-                            RadioButton(selected = (it == selectedCodec),
+                            RadioButton(
+                                selected = (it == selectedCodec),
                                 onClick = {
                                     selectedCodec = it
-                                })
+                                }
+                            )
                             Text(
-                                text = it.name, modifier = modifier.padding(start = 16.dp)
+                                text = it.name,
+                                modifier = modifier.padding(start = 16.dp)
                             )
                         }
                     }
-
                 }
                 Spacer(modifier = modifier.height(10.dp))
                 Button(onClick = {
@@ -69,7 +72,6 @@ fun AudioCodecDialog(
                     Text(text = "Select Audio Codec")
                 }
             }
-
         }
     }
 }

@@ -29,7 +29,6 @@ class FFMPEGServiceImpl : FFMPEGService() {
                     is FFMPEGCommand.FFMPEGTrimmer -> Trim(it)
                     is FFMPEGCommand.FFMPEGSpeed -> SpeedAdjust(it)
                 }
-
             }
         }
         return START_NOT_STICKY

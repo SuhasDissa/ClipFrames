@@ -28,7 +28,6 @@ data class ToolButtonItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(onClickCard: (String) -> Unit) {
-
     val videoTools = listOf(
         ToolButtonItem(R.string.convert_video) { onClickCard(VideoTools.Converter.route) },
         ToolButtonItem(R.string.extract_audio) { onClickCard(VideoTools.ExtractAudio.route) },
@@ -85,6 +84,5 @@ fun HomeScreen(onClickCard: (String) -> Unit) {
                 HighlightCard(name = item.name, onClick = item.onClick)
             }
         }
-
     }
 }

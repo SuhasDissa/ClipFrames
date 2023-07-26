@@ -27,11 +27,9 @@ class ReverseViewModel : ViewModel() {
             (ffmpegService as FFMPEGServiceImpl).onFFMPEGStatus = {
                 ffmpegStatus = it
             }
-
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
-
         }
     }
 

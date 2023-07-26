@@ -45,8 +45,12 @@ fun AudioConverterScreen(converterViewModel: AudioConverterViewModel = viewModel
             }
         }
     var audioCodecDialog by remember { mutableStateOf(false) }
-    var selectedAudioCodec: AudioCodec? by remember { mutableStateOf(converterViewModel.audioCodec) }
-    var selectedExtension: FileExtension by remember { mutableStateOf(converterViewModel.fileExtension) }
+    var selectedAudioCodec: AudioCodec? by remember {
+        mutableStateOf(converterViewModel.audioCodec)
+    }
+    var selectedExtension: FileExtension by remember {
+        mutableStateOf(converterViewModel.fileExtension)
+    }
     var fileExtensionDialog by remember { mutableStateOf(false) }
     if (fileExtensionDialog) {
         FileExtensionDialog(

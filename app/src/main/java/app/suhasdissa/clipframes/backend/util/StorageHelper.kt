@@ -16,11 +16,10 @@ object StorageHelper {
         val currentDate = currentDateTime.split("_").first()
         val currentTime = currentDateTime.split("_").last()
 
-        val fileName = "${fileNamePrefix}_${currentDate}_${currentTime}"
+        val fileName = "${fileNamePrefix}_${currentDate}_$currentTime"
         return File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
             "$fileName.$extension"
         )
     }
-
 }

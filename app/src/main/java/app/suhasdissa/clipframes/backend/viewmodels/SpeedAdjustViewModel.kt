@@ -30,7 +30,6 @@ class SpeedAdjustViewModel : ViewModel() {
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
-
         }
     }
 

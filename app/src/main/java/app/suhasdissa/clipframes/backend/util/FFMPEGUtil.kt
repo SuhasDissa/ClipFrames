@@ -9,7 +9,6 @@ import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import com.arthenica.ffmpegkit.Statistics
 
-
 object FFMPEGUtil {
     fun convert(
         context: Context,
@@ -25,9 +24,13 @@ object FFMPEGUtil {
         ).absolutePath
 
         val ffmpegCommand =
-            "-i $inputFilePath" + (ffmpegParameters.videoCodec?.let { " -c:v $it" }
-                ?: "") + (ffmpegParameters.audioCodec?.let { " -c:a $it" }
-                ?: "") + " $outputFIlePath"
+            "-i $inputFilePath" + (
+                ffmpegParameters.videoCodec?.let { " -c:v $it" }
+                    ?: ""
+                ) + (
+                ffmpegParameters.audioCodec?.let { " -c:a $it" }
+                    ?: ""
+                ) + " $outputFIlePath"
 
         ffmpegExecute(ffmpegCommand, onFinished, onStatistics)
     }
@@ -49,7 +52,6 @@ object FFMPEGUtil {
             "-i $inputFilePath" + (if (ffmpegParameters.video) " -vf reverse" else "") + (if (ffmpegParameters.audio) " -af areverse" else "") + " $outputFIlePath"
 
         ffmpegExecute(ffmpegCommand, onFinished, onStatistics)
-
     }
 
     fun trimmer(
@@ -88,13 +90,19 @@ object FFMPEGUtil {
         val audioSpeed = ffmpegParameters.speed
         val ffmpegCommand =
             "-i $inputFilePath" +
-                    (if (ffmpegParameters.audioOnly) "" else " -filter:v \"setpts=${
-                        String.format(
-                            "%.2f",
-                            videoSpeed
-                        )
-                    }*PTS\"") +
-                    " -filter:a \"atempo=${String.format("%.2f", audioSpeed)}\"  $outputFIlePath"
+                (
+                    if (ffmpegParameters.audioOnly) {
+                        ""
+                    } else {
+                        " -filter:v \"setpts=${
+                            String.format(
+                                "%.2f",
+                                videoSpeed
+                            )
+                        }*PTS\""
+                    }
+                    ) +
+                " -filter:a \"atempo=${String.format("%.2f", audioSpeed)}\"  $outputFIlePath"
 
         ffmpegExecute(ffmpegCommand, onFinished, onStatistics)
     }
@@ -108,7 +116,8 @@ object FFMPEGUtil {
             "FFMPEG Command",
             ffmpegCommand
         )
-        FFmpegKit.executeAsync(ffmpegCommand,
+        FFmpegKit.executeAsync(
+            ffmpegCommand,
             { session ->
                 Log.d(
                     "FFMPEG Stopped",
@@ -123,12 +132,14 @@ object FFMPEGUtil {
                         FFMPEGStatus.Error
                     }
                 onFinished(sessionResult)
-            }, {
+            },
+            {
                 Log.d(
                     "FFMPEG Log",
                     it.message
                 )
-            }, {
+            },
+            {
                 onStatistics(it)
             }
         )

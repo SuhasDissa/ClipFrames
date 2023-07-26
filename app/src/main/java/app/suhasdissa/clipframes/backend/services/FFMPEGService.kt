@@ -20,7 +20,6 @@ import app.suhasdissa.clipframes.backend.models.ConverterState
 import app.suhasdissa.clipframes.backend.util.NotificationHelper
 import app.suhasdissa.clipframes.backend.util.PermissionHelper
 
-
 abstract class FFMPEGService : Service() {
     open var converterState: ConverterState = ConverterState.IDLE
     var onConverterStateChanged: (ConverterState) -> Unit = {}
@@ -106,7 +105,6 @@ abstract class FFMPEGService : Service() {
             PendingIntent.FLAG_IMMUTABLE
         )
     }
-
 
     companion object {
         const val SERVICE_INTENT_ACTION = "app.suhasdissa.clipframes.SERVICE_ACTION"

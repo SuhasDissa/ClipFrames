@@ -36,7 +36,8 @@ fun FileExtensionDialog(
     var selectedExtension by remember { mutableStateOf(defaultExtension) }
     Dialog(onDismissRequest = { onDismissRequest.invoke() }) {
         Surface(
-            modifier = modifier.width(300.dp), shape = RoundedCornerShape(10.dp)
+            modifier = modifier.width(300.dp),
+            shape = RoundedCornerShape(10.dp)
         ) {
             Column(modifier = modifier.padding(10.dp)) {
                 Text("Select File Type")
@@ -51,16 +52,18 @@ fun FileExtensionDialog(
                                 })
                                 .padding(horizontal = 16.dp)
                         ) {
-                            RadioButton(selected = (it == selectedExtension),
+                            RadioButton(
+                                selected = (it == selectedExtension),
                                 onClick = {
                                     selectedExtension = it
-                                })
+                                }
+                            )
                             Text(
-                                text = it.name, modifier = modifier.padding(start = 16.dp)
+                                text = it.name,
+                                modifier = modifier.padding(start = 16.dp)
                             )
                         }
                     }
-
                 }
                 Spacer(modifier = modifier.height(10.dp))
                 Button(onClick = {
@@ -70,7 +73,6 @@ fun FileExtensionDialog(
                     Text(text = "Select File Type")
                 }
             }
-
         }
     }
 }
