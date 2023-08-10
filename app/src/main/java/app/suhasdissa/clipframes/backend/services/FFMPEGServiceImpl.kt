@@ -23,67 +23,17 @@ class FFMPEGServiceImpl : FFMPEGService() {
                     converterState = ConverterState.ACTIVE
                     onConverterStateChanged(converterState)
                 }
-                when (it) {
-                    is FFMPEGCommand.FFMPEGConvert -> Convert(it)
-                    is FFMPEGCommand.FFMPEGReverse -> Reverse(it)
-                    is FFMPEGCommand.FFMPEGTrimmer -> Trim(it)
-                    is FFMPEGCommand.FFMPEGSpeed -> SpeedAdjust(it)
+                FFMPEGUtil.processCommand(this,
+                    command = it,
+                    onFinished = { sessionResult ->
+                        onFFMPEGStatus(sessionResult)
+                        stopSelf()
+                    }) { statistics ->
+                    onFFMPEGStatus(FFMPEGStatus.Running(statistics))
                 }
             }
         }
         return START_NOT_STICKY
-    }
-
-    private fun Convert(ffmpegConvert: FFMPEGCommand.FFMPEGConvert) {
-        FFMPEGUtil.convert(
-            this,
-            ffmpegParameters = ffmpegConvert,
-            onFinished = { sessionResult ->
-                onFFMPEGStatus(sessionResult)
-                stopSelf()
-            }
-        ) { statistics ->
-            onFFMPEGStatus(FFMPEGStatus.Running(statistics))
-        }
-    }
-
-    private fun Reverse(ffmpegReverse: FFMPEGCommand.FFMPEGReverse) {
-        FFMPEGUtil.reverse(
-            this,
-            ffmpegParameters = ffmpegReverse,
-            onFinished = { sessionResult ->
-                onFFMPEGStatus(sessionResult)
-                stopSelf()
-            }
-        ) { statistics ->
-            onFFMPEGStatus(FFMPEGStatus.Running(statistics))
-        }
-    }
-
-    private fun Trim(ffmpegTrimmer: FFMPEGCommand.FFMPEGTrimmer) {
-        FFMPEGUtil.trimmer(
-            this,
-            ffmpegParameters = ffmpegTrimmer,
-            onFinished = { sessionResult ->
-                onFFMPEGStatus(sessionResult)
-                stopSelf()
-            }
-        ) { statistics ->
-            onFFMPEGStatus(FFMPEGStatus.Running(statistics))
-        }
-    }
-
-    private fun SpeedAdjust(ffmpegSpeed: FFMPEGCommand.FFMPEGSpeed) {
-        FFMPEGUtil.speedAdjust(
-            this,
-            ffmpegParameters = ffmpegSpeed,
-            onFinished = { sessionResult ->
-                onFFMPEGStatus(sessionResult)
-                stopSelf()
-            }
-        ) { statistics ->
-            onFFMPEGStatus(FFMPEGStatus.Running(statistics))
-        }
     }
 
     override fun onDestroy() {

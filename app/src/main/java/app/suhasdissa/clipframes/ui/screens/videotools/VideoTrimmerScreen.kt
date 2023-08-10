@@ -1,5 +1,5 @@
 package app.suhasdissa.clipframes.ui.screens.videotools
-
+/*
 import android.text.format.DateUtils
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,7 +30,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import app.suhasdissa.clipframes.R
 import app.suhasdissa.clipframes.backend.models.FFMPEGStatus
-import app.suhasdissa.clipframes.backend.viewmodels.TrimmerViewModel
 import app.suhasdissa.clipframes.ui.components.ScaffoldWithFAB
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -210,3 +209,4 @@ fun VideoTrimmerScreen(converterViewModel: TrimmerViewModel = viewModel(), trimM
 enum class TrimMode {
     VIDEO, GIF
 }
+*/

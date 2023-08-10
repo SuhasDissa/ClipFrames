@@ -14,20 +14,29 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import app.suhasdissa.clipframes.backend.models.AudioCodec
-import app.suhasdissa.clipframes.backend.models.AudioExtensions
 import app.suhasdissa.clipframes.backend.models.FFMPEGCommand
 import app.suhasdissa.clipframes.backend.models.FFMPEGStatus
+import app.suhasdissa.clipframes.backend.models.ReverseData
+import app.suhasdissa.clipframes.backend.models.SpeedData
+import app.suhasdissa.clipframes.backend.models.VideoCodec
+import app.suhasdissa.clipframes.backend.models.VideoExtensions
 import app.suhasdissa.clipframes.backend.services.FFMPEGService
 import app.suhasdissa.clipframes.backend.services.FFMPEGServiceImpl
 
-class AudioConverterViewModel : ViewModel() {
+class FfmpegToolViewModel : ViewModel() {
     var inputFile by mutableStateOf<Uri?>(null)
 
     var ffmpegStatus by mutableStateOf<FFMPEGStatus?>(null)
 
     var audioCodec by mutableStateOf<AudioCodec?>(null)
 
-    var fileExtension by mutableStateOf(AudioExtensions.all.first())
+    var videoCodec by mutableStateOf<VideoCodec?>(null)
+
+    var reverseData by mutableStateOf<ReverseData?>(null)
+
+    var speedData by mutableStateOf<SpeedData?>(null)
+
+    var fileExtension by mutableStateOf(VideoExtensions.all.first())
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -41,14 +50,15 @@ class AudioConverterViewModel : ViewModel() {
         }
     }
 
-    fun startConverter(context: Context, outputFilePrefix: String) {
+    fun startConverter(context: Context) {
         inputFile?.let { inputFile ->
-            val ffmpegParameters = FFMPEGCommand.FFMPEGConvert(
+            val ffmpegParameters = FFMPEGCommand(
                 inputFile.toString(),
-                videoCodec = null,
+                videoCodec = videoCodec?.codec,
                 audioCodec = audioCodec?.codec,
                 extension = fileExtension.extension,
-                outputFilePrefix = outputFilePrefix
+                reverse = reverseData,
+                speed = speedData
             )
             val serviceIntent = Intent(context, FFMPEGServiceImpl::class.java)
             serviceIntent.putExtra("command", ffmpegParameters)
