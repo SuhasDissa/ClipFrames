@@ -2,6 +2,7 @@ package app.suhasdissa.clipframes.ui.screens.videotools
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -56,6 +57,9 @@ fun VideoEditorScreen(videoViewModel: FfmpegToolViewModel = viewModel()) {
         mutableStateOf(videoViewModel.fileExtension)
     }
     var speedEnabled by remember {
+        mutableStateOf(false)
+    }
+    var showTrimmer by remember {
         mutableStateOf(false)
     }
     var fileExtensionDialog by remember { mutableStateOf(false) }
@@ -215,6 +219,34 @@ fun VideoEditorScreen(videoViewModel: FfmpegToolViewModel = viewModel()) {
                 }
             }
             item {
+                var enableTrimmer by remember { mutableStateOf(false) }
+                ExpandableToggleSwitchRow(
+                    title = "Trim Video:",
+                    checked = enableTrimmer,
+                    onCheckedChange = {
+                        enableTrimmer = it
+                        if (!it) {
+                            videoViewModel.trimTimestamps = null
+                        }
+                    }) {
+                    Column {
+                        AnimatedVisibility(visible = speedEnabled) {
+                            Card {
+                                Row(Modifier.padding(8.dp)) {
+                                    Text(
+                                        "Trimming can give unexpected results when speed changer is enabled.",
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
+                        }
+                        Button({ showTrimmer = true }) {
+                            Text(text = "Select Trim Range")
+                        }
+                    }
+                }
+            }
+            item {
                 ExpandableToggleSwitchRow(
                     title = "Change Speed:",
                     checked = speedEnabled,
@@ -288,6 +320,9 @@ fun VideoEditorScreen(videoViewModel: FfmpegToolViewModel = viewModel()) {
                 }
             }
         }
+    }
+    if (showTrimmer) {
+        VideoTrimmerScreen(onDismissRequest = { showTrimmer = false })
     }
     videoViewModel.ffmpegStatus?.let {
         AlertDialog(onDismissRequest = {

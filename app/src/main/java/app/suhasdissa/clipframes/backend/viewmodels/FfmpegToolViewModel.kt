@@ -18,6 +18,7 @@ import app.suhasdissa.clipframes.backend.models.FFMPEGCommand
 import app.suhasdissa.clipframes.backend.models.FFMPEGStatus
 import app.suhasdissa.clipframes.backend.models.ReverseData
 import app.suhasdissa.clipframes.backend.models.SpeedData
+import app.suhasdissa.clipframes.backend.models.TrimTimestamps
 import app.suhasdissa.clipframes.backend.models.VideoCodec
 import app.suhasdissa.clipframes.backend.models.VideoExtensions
 import app.suhasdissa.clipframes.backend.services.FFMPEGService
@@ -36,7 +37,11 @@ class FfmpegToolViewModel : ViewModel() {
 
     var speedData by mutableStateOf<SpeedData?>(null)
 
+    var trimTimestamps by mutableStateOf<TrimTimestamps?>(null)
+
     var fileExtension by mutableStateOf(VideoExtensions.all.first())
+
+    // var trimThumbnails by mutableStateOf(listOf<ImageBitmap>())
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -58,7 +63,8 @@ class FfmpegToolViewModel : ViewModel() {
                 audioCodec = audioCodec?.codec,
                 extension = fileExtension.extension,
                 reverse = reverseData,
-                speed = speedData
+                speed = speedData,
+                trimTimestamps = trimTimestamps
             )
             val serviceIntent = Intent(context, FFMPEGServiceImpl::class.java)
             serviceIntent.putExtra("command", ffmpegParameters)
@@ -68,6 +74,19 @@ class FfmpegToolViewModel : ViewModel() {
             Toast.makeText(context, "Failed Opening File", Toast.LENGTH_SHORT)
         }
     }
+
+    /*
+    fun loadThumbnailList(context: Context) {
+        viewModelScope.launch {
+            inputFile?.let {
+                val thumbnailLoader = ThumbnailLoader()
+                trimThumbnails = thumbnailLoader.loadThumbnails(context, it).map { bitmap ->
+                    bitmap.asImageBitmap()
+                }
+            }
+        }
+    }
+     */
 
     private fun startconverterService(context: Context, intent: Intent) {
         runCatching {

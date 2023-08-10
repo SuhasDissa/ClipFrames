@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
+import android.webkit.MimeTypeMap
 import androidx.documentfile.provider.DocumentFile
 import java.io.File
 import java.text.SimpleDateFormat
@@ -51,7 +52,7 @@ object StorageHelper {
 
             else -> DocumentFile.fromTreeUri(context, Uri.parse(prefDir))!!
         }
-
-        return saveDir.createFile("video/mp4", "$fileName.$extension")!!
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)!!
+        return saveDir.createFile(mimeType, fileName)!!
     }
 }
