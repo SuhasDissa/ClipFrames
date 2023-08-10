@@ -100,5 +100,5 @@ dependencies {
     implementation("com.google.android.exoplayer:exoplayer:2.18.7")
 
     //FFMPEG KIT
-    implementation("com.arthenica:ffmpeg-kit-full-gpl:5.1")
+    implementation("com.arthenica:ffmpeg-kit-min-gpl:5.1")
 }
