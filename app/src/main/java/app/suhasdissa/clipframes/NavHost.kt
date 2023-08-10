@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import app.suhasdissa.clipframes.ui.screens.HomeScreen
 import app.suhasdissa.clipframes.ui.screens.audiotools.AudioEditorScreen
+import app.suhasdissa.clipframes.ui.screens.settings.AboutScreen
+import app.suhasdissa.clipframes.ui.screens.settings.SettingsScreen
 import app.suhasdissa.clipframes.ui.screens.videotools.VideoEditorScreen
 
 @Composable
@@ -26,6 +28,14 @@ fun AppNavHost(navHostController: NavHostController) {
 
         composable(route = Destination.VideoTool.route) {
             VideoEditorScreen()
+        }
+        composable(route = Destination.About.route) {
+            AboutScreen()
+        }
+        composable(route = Destination.Settings.route) {
+            SettingsScreen {
+                navHostController.navigateTo(Destination.About.route)
+            }
         }
     }
 }

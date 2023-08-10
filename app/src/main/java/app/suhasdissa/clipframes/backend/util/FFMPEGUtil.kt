@@ -18,8 +18,10 @@ object FFMPEGUtil {
     ) {
         val inputFilePath =
             FFmpegKitConfig.getSafParameterForRead(context, command.inputFile.toUri())
+        val outputFIleUri =
+            StorageHelper.getOutputFile(context, command.extension, "ClipFrames").uri
         val outputFIlePath =
-            StorageHelper.getOutputFile(command.extension, "ClipFrames").absolutePath
+            FFmpegKitConfig.getSafParameterForWrite(context, outputFIleUri)
 
         var ffmpegCommand = ""
         command.trimTimestamps?.let {

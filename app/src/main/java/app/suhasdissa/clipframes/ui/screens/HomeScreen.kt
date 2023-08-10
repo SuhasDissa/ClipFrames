@@ -4,7 +4,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,6 +34,10 @@ fun HomeScreen(onNavigate: (Destination) -> Unit) {
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(8.dp)
                     )
+                }, actions = {
+                    IconButton(onClick = { onNavigate(Destination.Settings) }) {
+                        Icon(imageVector = Icons.Default.Settings, contentDescription = "Settings")
+                    }
                 }
             )
         }
