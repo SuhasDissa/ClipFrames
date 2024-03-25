@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
+import app.suhasdissa.clipframes.backend.util.PickFolderContract
 import app.suhasdissa.clipframes.backend.util.SaveDirectoryKey
 import app.suhasdissa.clipframes.backend.util.preferences
 import app.suhasdissa.clipframes.ui.components.SettingItem
@@ -33,16 +34,10 @@ fun SettingsScreen(
     onAboutClick: () -> Unit
 ) {
     val context = LocalContext.current
-    val directoryPicker =
-        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) {
-            it ?: return@rememberLauncherForActivityResult
-            context.contentResolver.takePersistableUriPermission(
-                it,
-                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            )
-            Log.d("FIle path", it.toString())
-            context.preferences.edit { putString(SaveDirectoryKey, it.toString()) }
-        }
+    val directoryPicker = rememberLauncherForActivityResult(PickFolderContract()) {
+        it ?: return@rememberLauncherForActivityResult
+        context.preferences.edit { putString(SaveDirectoryKey, it.toString()) }
+    }
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
         CenterAlignedTopAppBar(title = {
             Text(
